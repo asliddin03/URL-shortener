@@ -6,11 +6,11 @@ require (
 	github.com/brianvoe/gofakeit/v6 v6.22.0
 	github.com/fatih/color v1.15.0
 	github.com/gavv/httpexpect/v2 v2.15.0
-	github.com/go-chi/chi/v5 v5.0.8
+	github.com/go-chi/chi/v5 v5.1.0
 	github.com/go-chi/render v1.0.2
 	github.com/go-playground/validator/v10 v10.14.1
 	github.com/ilyakaznacheev/cleanenv v1.5.0
-	github.com/mattn/go-sqlite3 v1.14.17
+	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/stretchr/testify v1.9.0
 	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8
 )

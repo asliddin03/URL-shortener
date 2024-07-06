@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/spf13/viper"
 	"log"
 	"time"
@@ -28,8 +29,8 @@ func MustLoad() *Config {
 	}
 
 	var cfg Config
-	if err := viper.Unmarshal(&cfg); err != nil {
-		log.Fatalf("Error unmarshalling config: %s", err)
+	if err := cleanenv.ReadConfig(viper.ConfigFileUsed(), &cfg); err != nil {
+		log.Fatalf("Error reading config file: %s", err)
 	}
 
 	return &cfg
