@@ -4,7 +4,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+
 	"github.com/mattn/go-sqlite3"
+
 	"url-shortener/internal/storage"
 )
 
@@ -21,14 +23,14 @@ func New(storagePath string) (*Storage, error) {
 	}
 
 	stmt, err := db.Prepare(`
-		CREATE TABLE IF NOT EXISTS url(
-			id INTEGER PRIMARY KEY,
-			alias TEXT NOT NULL UNIQUE,
-			url TEXT NOT NULL);
-		CREATE INDEX IF NOT EXISTS idx_alias ON url(alias);
-		`)
+	CREATE TABLE IF NOT EXISTS url(
+		id INTEGER PRIMARY KEY,
+		alias TEXT NOT NULL UNIQUE,
+		url TEXT NOT NULL);
+	CREATE INDEX IF NOT EXISTS idx_alias ON url(alias);
+	`)
 	if err != nil {
-		return nil, fmt.Errorf("#{op}: #{err}")
+		return nil, fmt.Errorf("%s: %w", op, err)
 	}
 
 	_, err = stmt.Exec()
@@ -52,6 +54,7 @@ func (s *Storage) SaveURL(urlToSave string, alias string) (int64, error) {
 		if sqliteErr, ok := err.(sqlite3.Error); ok && sqliteErr.ExtendedCode == sqlite3.ErrConstraintUnique {
 			return 0, fmt.Errorf("%s: %w", op, storage.ErrURLExists)
 		}
+
 		return 0, fmt.Errorf("%s: %w", op, err)
 	}
 
@@ -74,15 +77,16 @@ func (s *Storage) GetURL(alias string) (string, error) {
 	var resURL string
 
 	err = stmt.QueryRow(alias).Scan(&resURL)
-	if errors.Is(err, sql.ErrNoRows) {
-		return "", storage.ErrURLNotFound
-	}
 	if err != nil {
-		return "", fmt.Errorf("#{op}: execute statement: #{err}")
+		if errors.Is(err, sql.ErrNoRows) {
+			return "", storage.ErrURLNotFound
+		}
+
+		return "", fmt.Errorf("%s: execute statement: %w", op, err)
 	}
 
 	return resURL, nil
 }
 
-// TODO implement method
+// TODO: implement method
 // func (s *Storage) DeleteURL(alias string) error
